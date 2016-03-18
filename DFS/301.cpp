@@ -1,28 +1,11 @@
-#include <iostream>
-#include <vector>
-#include <string>
-#include <set>
-
-using namespace std;
-
 class Solution {
 public:
     vector<string> removeInvalidParentheses(string s) {
-        DFS(s, calc(s));
+        DFS(s, calc(s), 0);
         return ans;
     }
+    set<string> visitedString;
 private:
-    vector<string> visitedString;
-    bool isVisited(string s) {
-
-        for (int i = 0; i < visitedString.size(); i ++)
-            if (visitedString[i] == s) {
-                return true;
-            }
-
-        return false;
-
-    }
     vector<string> ans;
     int calc(string s) {
         int left = 0;
@@ -41,18 +24,18 @@ private:
         return left + right;
     }
 
-    void DFS(string s, int unMatchedCnt) {
+    void DFS(string s, int unMatchedCnt, int start) {
         if (unMatchedCnt == 0) {
             ans.push_back(s);
         } else {
-            for (int i = 0; i < s.size(); i ++) {
+            for (int i = start; i < s.size(); i ++) {
                 if (s[i] != '(' && s[i] != ')') continue;
                 string newString = s.substr(0, i) + s.substr(i + 1);
-                if (!isVisited(newString)) {
-                    visitedString.push_back(newString);
+                if (visitedString.find(newString) == visitedString.end()) {
+                    visitedString.insert(newString);
                     int num = calc(newString);
                     if (num < unMatchedCnt) {
-                        DFS(newString, num);
+                        DFS(newString, num, i);
                     }
                 }
             }
